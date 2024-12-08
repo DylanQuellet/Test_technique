@@ -1,0 +1,58 @@
+service: contact-api
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: eu-west-3 # Pour Paris
+
+functions:
+  getContacts:
+    handler: handler.getContacts
+    events:
+      - http:
+          path: contacts
+          method: get
+          
+  getContact:
+    handler: handler.getContact
+    events:
+      - http:
+          path: contacts/{id}
+          method: get
+
+  createContact:
+    handler: handler.createContact
+    events:
+      - http:
+          path: contacts
+          method: post
+
+  updateContact:
+    handler: handler.updateContact
+    events:
+      - http:
+          path: contacts/{id}
+          method: put
+
+  deleteContact:
+    handler: handler.deleteContact
+    events:
+      - http:
+          path: contacts/{id}
+          method: delete
+
+resources:
+  Resources:
+    ContactsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Contacts
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
